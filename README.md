@@ -1,287 +1,669 @@
-# Creating a Virtual Webcam Chatbot That Responds to Voice Commands in a Video Meeting
+<div align="center">
 
-## Introduction:
+# 🎙️ Meeting Copilot
 
-In this tutorial, we'll walk you through the process of creating a virtual webcam chatbot that responds to voice commands in a video meeting. The chatbot will listen for a specific activation word, transcribe audio, send the text to the AI, and display the chatbot's response on the virtual webcam video feed.
+### Enterprise AI Voice Assistant for Intelligent Meeting Support
 
-We'll use technologies like OpenAI's GPT-3 for generating chatbot responses, IBM Watson Speech to Text for converting audio to text, IBM Watson Text to Speech for converting text to audio, and PyVirtualCam for streaming the audio as output through a virtual webcam. So let's get started!
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)](https://github.com/ruslanmv/Virtual-Webcam-Chatbot)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-success)](https://github.com/ruslanmv/Virtual-Webcam-Chatbot)
 
-## Step 1: Setting up the Environment
+**Transform your meetings with AI-powered voice assistance**
 
-First we are going to install our enviroment with python 3.10.11 here , after you installed in your working directory you can create your enviroment
+[Features](#-key-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Architecture](#-architecture) • [Support](#-support)
+
+---
+
+</div>
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [Architecture](#-architecture)
+- [API Integration](#-api-integration)
+- [Development](#-development)
+- [Troubleshooting](#-troubleshooting)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
+
+---
+
+## 🌟 Overview
+
+**Meeting Copilot** is an enterprise-grade AI voice assistant designed to enhance productivity during meetings. It provides real-time transcription, intelligent responses, and meeting summaries through advanced speech recognition and natural language processing.
+
+### 🎯 Perfect For
+
+- 💼 **Business Professionals** - Never miss important meeting details
+- 👥 **Remote Teams** - Stay engaged in virtual meetings
+- 📊 **Project Managers** - Capture action items automatically
+- 🎓 **Educators** - Assist in virtual classrooms
+- 🏢 **Enterprises** - Scalable meeting intelligence solution
+
+---
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎤 Audio Intelligence
+- **Multi-source Capture** - Microphone, system audio, or both
+- **Voice Activity Detection** - Smart speech segmentation
+- **Real-time Transcription** - IBM Watson STT integration
+- **Wake Word Activation** - Customizable trigger ("Watson")
+
+</td>
+<td width="50%">
+
+### 🤖 AI-Powered
+- **Natural Language Understanding** - OpenAI GPT models
+- **Contextual Responses** - Answer, Opinion, Summarize modes
+- **Text-to-Speech** - Natural voice output
+- **Conversation Memory** - Context-aware interactions
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🖥️ Professional Interface
+- **Desktop Application** - Modern PySide6 UI
+- **Real-time Display** - Live transcript visualization
+- **System Tray** - Minimalist operation
+- **Hotkeys** - Quick mute/unmute controls
+
+</td>
+<td width="50%">
+
+### 🔒 Privacy & Security
+- **Opt-in Logging** - User consent required
+- **Data Encryption** - Secure local storage
+- **Privacy-First** - No unauthorized recording
+- **Compliance Ready** - Enterprise data policies
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-10%2B-0078D6?logo=windows&logoColor=white)
+![uv](https://img.shields.io/badge/uv-Package%20Manager-orange)
+
+### One-Command Installation
+
+```bash
+# Clone repository
+git clone https://github.com/ruslanmv/Virtual-Webcam-Chatbot.git
+cd Virtual-Webcam-Chatbot
+
+# Install with uv (auto-installs if missing)
+make install
+
+# Configure API keys
+cp .env.example .env
+# Edit .env with your credentials
+
+# Launch application
+make run
+```
+
+### ⚡ That's It!
+
+Your Meeting Copilot is now ready. Say **"Watson"** to activate!
+
+---
+
+## 📦 Installation
+
+### Method 1: Using Makefile (Recommended)
+
+```bash
+make install
+```
+
+This will:
+- ✅ Install `uv` package manager (if not present)
+- ✅ Create Python 3.11 virtual environment
+- ✅ Install all dependencies
+- ✅ Verify installation
+
+### Method 2: Manual Installation
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create virtual environment
+uv venv --python 3.11
+
+# Install package
+uv pip install -e .
+```
+
+### Verify Installation
+
+```bash
+make info
+```
+
+---
+
+## ⚙️ Configuration
+
+### 1. API Keys Setup
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+### 2. Required Credentials
+
+Edit `.env` and add your API keys:
+
+```env
+# IBM Watson Speech-to-Text (Required)
+IBM_SPEECH_TO_TEXT_API=your_ibm_stt_api_key
+IBM_STT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/xxx
+
+# OpenAI API (Required)
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
+
+# TTS Provider (Edge TTS is free - no key needed)
+TTS_PROVIDER=edge
+EDGE_TTS_VOICE=en-US-GuyNeural
+```
+
+### 3. Get API Keys
+
+| Service | Purpose | Get Key |
+|---------|---------|---------|
+| 🔊 **IBM Watson STT** | Speech-to-Text | [IBM Cloud Console](https://cloud.ibm.com/catalog/services/speech-to-text) |
+| 🤖 **OpenAI** | Language Model | [OpenAI Platform](https://platform.openai.com/api-keys) |
+| 🗣️ **Edge TTS** | Text-to-Speech | Free - No key required |
+
+### 4. Optional Settings
+
+```env
+# Bot Configuration
+BOT_NAME=watson                    # Change wake word
+AUDIO_SOURCE=microphone            # microphone/system/both
+DEFAULT_MODE=answer                # answer/opinion/summarize
+
+# Privacy
+ENABLE_LOGGING=false               # Opt-in conversation logging
+ENCRYPT_LOGS=true                  # Encrypt logs if enabled
+
+# Performance
+VAD_AGGRESSIVENESS=2               # 0-3 (higher = more aggressive)
+PREWAKE_BUFFER_SECONDS=20         # Context window before wake
+```
+
+---
+
+## 💻 Usage
+
+### Launch Application
+
+```bash
+# Desktop UI (default)
+make run
+
+# Console mode (no UI)
+make console
+
+# Development mode
+make dev
+```
+
+### Using the Assistant
+
+1. **▶️ Start Application** - Launch with `make run`
+2. **🟢 Listening** - Green indicator shows active state
+3. **🗣️ Say Wake Word** - "Watson" (or your configured name)
+4. **💬 Speak Request** - Ask questions or request summaries
+5. **👂 Hear Response** - AI responds with spoken answer
+
+### Example Interactions
 
 ```
-python -m venv .venv
+You: "Watson, what did they say about the Q4 budget?"
+Watson: "The team discussed a 15% increase in Q4 budget allocation..."
 
+You: "Watson, give me your opinion on this approach"
+Watson: "Based on the discussion, this approach has merit because..."
+
+You: "Watson, summarize the last 2 minutes"
+Watson: "Key points: 1) Budget approval pending, 2) Timeline extended..."
 ```
 
-You’ll notice a new directory in your current working directory with the same name as your virtual environment, then activate the virtual environment.
+### Assistant Modes
 
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| 💬 **Answer** | Direct question responses | "What did they say about X?" |
+| 💡 **Opinion** | Analysis and perspective | "What do you think about Y?" |
+| 📝 **Summarize** | Conversation summary | "Summarize the discussion" |
 
-```
-.venv\Scripts\activate.bat
+### Keyboard Shortcuts
 
-```
-usually is convinent having the latest pip
-python -m pip install --upgrade pip
-optionally  we can install Jupyter Notebook
-```
-pip install ipykernel notebook
+| Action | Shortcut | Description |
+|--------|----------|-------------|
+| 🔇 **Mute/Unmute** | Button | Toggle listening |
+| 🗑️ **Clear** | Button | Clear transcript |
+| ❌ **Quit** | Tray → Quit | Close application |
 
-```
-then we install our kernel name
+---
 
-```
-python -m ipykernel install --user --name watson --display-name "Python (watson)"
+## 🏗️ Architecture
 
-```
-Before we begin, let's set up the environment by installing the necessary libraries. Open your terminal or command prompt and run the following commands:
-
-```
-pip install pyaudio openai ibm_watson opencv-python  pyvirtualcam  langchain ibm-watson-machine-learning python-dotenv
-```
-## Step 2 : API keys 
-
-### IBM Cloud
-1. Log in to your IBM Cloud account or sign up for a new account if you don't have one.
-2. Go to the IBM Cloud Catalog: https://cloud.ibm.com/catalog/
-3. Search for "Speech to Text" and click on the "Speech to Text" service.
- ![](assets/20231107181637.png)
-
-4. On the service page, choose a region, plan (Lite or Standard), and give your service a name and tags if you want. Then click the "Create" button.
-   ![](assets/2023-11-07-18-46-10.png)
-
-5. Once the service is created, you'll be taken to the "Manage" tab of your new Speech to Text service instance. Here you can find your API key and the service endpoint URL. Make sure to save this information somewhere secure, as you'll need it to access the API.
-![](assets/2023-11-07-18-52-10.png)
-Repeat the same process for the Text-to-Speech service. In step 3, search for "Text to Speech" and follow the same steps. You'll get a separate API key and endpoint URL for this service.
-
-Now you have the API keys and endpoints for both Watson Speech-to-Text and Text-to-Speech services. You can use these to make API requests from your application.
-
+### System Overview
 
 ```
-### Open AI
+┌─────────────────┐
+│  🎤 Microphone  │────┐
+└─────────────────┘    │
+                       ▼
+┌─────────────────┐  ┌────────────────┐
+│ 🔊 System Audio │─▶│ Audio Capture  │
+└─────────────────┘  └────────┬───────┘
+                              ▼
+                     ┌────────────────┐
+                     │ VAD Segment    │
+                     └────────┬───────┘
+                              ▼
+                     ┌────────────────┐
+                     │  Ring Buffer   │
+                     └────────┬───────┘
+                              ▼
+                     ┌────────────────┐
+                     │  Watson STT    │
+                     └────────┬───────┘
+                              ▼
+                     ┌────────────────┐
+                     │  Wake Word?    │
+                     └────┬──────┬────┘
+                         Yes    No
+                          ▼      └──────┐
+                   ┌──────────┐         │
+                   │ OpenAI   │         │
+                   │   LLM    │         │
+                   └────┬─────┘         │
+                        ▼               │
+                   ┌──────────┐         │
+                   │   TTS    │         │
+                   └────┬─────┘         │
+                        ▼               │
+              ┌──────────────────┐     │
+              │ 🔊 Speaker + UI  │◀────┘
+              └──────────────────┘
+```
 
-To get an API key from OpenAI, you'll need to sign up for an account and access the API key from the OpenAI Dashboard. Here's a step-by-step guide:
-1. Go to the OpenAI website: https://www.openai.com/
-2. Click on the "Get started" or "Sign up" button to create a new account. If you already have an account, click on "Log in" to sign in to your account.
-3. After signing up or logging in, you'll be redirected to the OpenAI Dashboard.
-4. On the Dashboard, click on the "API Keys" tab in the sidebar menu.
-5. You should see a list of your API keys. If you don't have any API keys, click on the "Create API Key" button.
-6. Fill in the required information for the new API key, such as a name and a description. Select the appropriate permissions for the key, then click "Create".
-7. Once the API key is created, you'll see the key in the API Keys list. Copy the API key to use it in your application. Remember to keep the key secure, as it provides access to the OpenAI API with your account's permissions.
-
-
-To add an API key in a .env file , first, create a .env file in your project directory and add the API key like this:
+### Component Structure
 
 ```
-IBM_SPEECH_TO_TEXT_API=your_api_key_here
-IBM_TEXT_TO_SPEECH_API=your_api_key_here
-CHATGPT_API_KEY=your_api_key_here
+meeting_copilot/
+├── 🎵 audio/              Audio Processing Pipeline
+│   ├── capture_mic.py     Microphone capture (sounddevice)
+│   ├── capture_loopback.py System audio (WASAPI)
+│   ├── vad.py             Voice Activity Detection (WebRTC)
+│   └── ring_buffer.py     Pre-wake audio buffer
+│
+├── 🗣️ stt/               Speech-to-Text
+│   └── watson_stt.py      IBM Watson STT client
+│
+├── 🎯 wakeword/           Wake Word Detection
+│   └── wakeword_text.py   Text-based detection (v1.0)
+│
+├── 🤖 llm/               Language Model
+│   ├── client.py          OpenAI GPT client
+│   └── prompts.py         System prompts & templates
+│
+├── 🔊 tts/               Text-to-Speech
+│   ├── edge_tts_client.py Microsoft Edge TTS (free)
+│   └── ibm_tts.py         IBM Watson TTS
+│
+├── 🖥️ ui/                User Interface
+│   └── desktop_app.py     PySide6 desktop application
+│
+├── ⚙️ config.py           Configuration management
+└── 🚀 app.py              Main orchestrator
 ```
 
-## Step 2: Capturing Audio
-We'll start by capturing audio in real-time using the PyAudio library. 
-Create a new Python file (e.g., `audio_capture.py`) and add the following code:
+### Technology Stack
+
+| Category | Technology | Purpose |
+|----------|-----------|---------|
+| **Language** | Python 3.11+ | Core development |
+| **Package Manager** | uv | Fast dependency management |
+| **Speech-to-Text** | IBM Watson STT | Audio transcription |
+| **Language Model** | OpenAI GPT-4o-mini | Intelligent responses |
+| **Text-to-Speech** | Edge TTS / IBM Watson | Voice synthesis |
+| **UI Framework** | PySide6 (Qt6) | Desktop interface |
+| **Audio Processing** | sounddevice, webrtcvad | Audio I/O & VAD |
+| **Configuration** | Pydantic | Settings validation |
+
+---
+
+## 🔌 API Integration
+
+### IBM Watson Speech-to-Text
 
 ```python
-import pyaudio
-import wave
-import threading
-import queue
+from meeting_copilot.stt import WatsonSTT
 
-# Audio settings
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
-RECORD_SECONDS = 5
+stt = WatsonSTT(
+    api_key="your_api_key",
+    url="your_service_url"
+)
 
-# Create audio stream queue
-audio_queue = queue.Queue()
-
-# Create a flag to indicate when to trigger ChatGPT
-trigger_chatgpt = False
-
-# Function to capture audio and add it to the queue
-def capture_audio():
-    p = pyaudio.PyAudio()
-
-    stream = p.open(format=FORMAT,
-                    channels=CHANNELS,
-                    rate=RATE,
-                    input=True,
-                    frames_per_buffer=CHUNK)
-
-    print("Capturing audio...")
-
-    while True:
-        frames = []
-        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-            data = stream.read(CHUNK)
-            frames.append(data)
-        audio_queue.put(b''.join(frames))
-
-        # Check if the word "computer" is said
-        if b'computer' in b''.join(frames):
-            trigger_chatgpt = True
-
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-
-# Start capturing audio in a separate thread
-audio_thread = threading.Thread(target=capture_audio)
-audio_thread.start()
+transcript, confidence = stt.transcribe_pcm16(audio_bytes, 16000)
 ```
 
-Step 3: Converting Audio to Text
-Using IBM Watson Speech to Text, we'll convert the captured audio into text. Add the following code to `audio_capture.py`:
+### OpenAI LLM
 
 ```python
-from ibm_watson import SpeechToTextV1
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from dotenv import load_dotenv
-load_dotenv()
-# IBM Watson Speech to Text settings
-IBM_SPEECH_TO_TEXT_API = os.getenv('IBM_SPEECH_TO_TEXT_API')
+from meeting_copilot.llm import LLMClient
 
-URL = 'https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/your_instance_id'
+llm = LLMClient(api_key="your_api_key")
 
-# Function to convert audio to text
-def convert_audio_to_text(audio_data):
-    authenticator = IAMAuthenticator(API_KEY)
-    speech_to_text = SpeechToTextV1(authenticator=authenticator)
-    speech_to_text.set_service_url(URL)
-
-    response = speech_to_text.recognize(audio=audio_data,
-                                        content_type='audio/l16; rate=44100',
-                                        model='en-US_BroadbandModel',
-                                        continuous=True,
-                                        ).get_result()
-
-    return response['results'][0]['alternatives'][0]['transcript']
+response = llm.respond(
+    mode="answer",
+    transcript_context="Meeting discussion..."
+)
 ```
 
-Step 4: Generating Chatbot Responses
-To generate chatbot responses, we'll use OpenAI's GPT-3. Create a new Python file (e.g., `chatbot.py`) and add the following code:
+### Edge TTS
 
 ```python
-import openai
+from meeting_copilot.tts import EdgeTTSClient
 
-# OpenAI GPT-3 settings
-OPENAI_API_KEY = 'your_openai_api_key'
-
-# Function to generate answer using ChatGPT
-def generate_answer(question):
-    openai.api_key = OPENAI_API_KEY
-
-    response = openai.Completion.create(
-        engine='text-davinci-003',
-        prompt=question,
-        max_tokens=100,
-        temperature=0.7,
-        n=1,
-        stop=None,
-        timeout=15
-    )
-
-    answer = response.choices[0].text.strip()
-    return answer
+tts = EdgeTTSClient(voice="en-US-GuyNeural")
+tts.speak("Hello, this is Watson")
 ```
 
-Step 5: Converting Text to Speech
-Using IBM Watson Text to Speech, we'll convert the generated chatbot response from text to audio. Add the following code to `chatbot.py`:
+---
 
-```python
-from ibm_watson import TextToSpeechV1
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+## 🛠️ Development
 
-# IBM Watson Text to Speech settings
-API_KEY = 'your_api_key'
-URL = 'https://api.us-south.text-to-speech.watson.cloud.ibm.com/instances/your_instance_id'
+### Available Make Commands
 
-# Function to convert text to speech
-def convert_text_to_speech(text, output_file):
-    authenticator = IAMAuthenticator(API_KEY)
-    text_to_speech = TextToSpeechV1(authenticator=authenticator)
-    text_to_speech.set_service_url(URL)
-
-    with open(output_file, 'wb') as audio_file:
-        response = text_to_speech.synthesize(
-            text,
-            accept='audio/mp3',
-            voice='en-US_AllisonV3Voice'
-        ).get_result()
-
-        audio_file.write(response.content)
+```bash
+make help        # 📖 Show all available commands
+make install     # 📦 Install dependencies with uv
+make run         # ▶️  Run desktop application
+make console     # 🖥️ Run console mode (no UI)
+make dev         # 🔧 Run development mode
+make test        # ✅ Run test suite
+make lint        # 🔍 Run code linting
+make format      # ✨ Auto-format code
+make clean       # 🧹 Clean generated files
+make update      # ⬆️  Update dependencies
+make build       # 📦 Build distribution package
 ```
 
-Step 6: Streaming Audio as Webcam Output
-We'll use PyVirtualCam to stream the generated audio as the output of a virtual webcam. Add the following code to `chatbot.py`:
+### Project Setup for Development
 
-```python
-import cv2
-import numpy as np
-import pyvirtualcam
+```bash
+# Clone repository
+git clone https://github.com/ruslanmv/Virtual-Webcam-Chatbot.git
+cd Virtual-Webcam-Chatbot
 
-# Webcam settings
-WIDTH = 640
-HEIGHT = 480
+# Install development dependencies
+make install-dev
 
-# Start virtual webcam
-with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=30) as cam:
-    print(f'Using virtual camera: {cam.device_name}')
+# Run tests
+make test
 
-    # Continuously monitor audio and generate chatbot answers
-    while True:
-        if not audio_queue.empty() and trigger_chatgpt:
-            audio_data = audio_queue.get()
-            text = convert_audio_to_text(audio_data)
+# Format code
+make format
 
-            # Trigger ChatGPT and generate answer
-            question = " ".join(text.split("computer")[1:])
-            answer = generate_answer(question)
-
-            # Convert answer to speech and play it
-            output_file = 'answer.mp3'
-            convert_text_to_speech(answer, output_file)
-            playsound(output_file)
-
-            # Read the generated audio
-            audio = pyaudio.PyAudio()
-            wf = wave.open(output_file, 'rb')
-
-            # Stream the audio frames as webcam output
-            while True:
-                data = wf.readframes(CHUNK)
-                if len(data) == 0:
-                    break
-                cam.send(data)
-                cam.sleep_until_next_frame()
-
-            wf.close()
-            audio.terminate()
-
-        # Sleep for a short duration to avoid high CPU usage
-        time.sleep(0.1)
+# Check code quality
+make lint
 ```
 
-Running the Program:
-To run the program, follow these steps:
+### Code Quality Standards
 
-1. Make sure you have all the required libraries installed.
-2. Replace the placeholder API keys with your own API keys for IBM Watson Speech to Text and Text to Speech services, as well as your OpenAI API key.
-3. Adjust the desired settings like audio capture duration, webcam resolution, etc., according to your requirements.
-4. Save the code in the respective Python files as mentioned above (`audio_capture.py` and `chatbot.py`).
-5. Execute the Python files in separate terminal windows using the command `python audio_capture.py` and `python chatbot.py`.
-6. When the program starts running, it will capture audio and initiate the chatbot response when the trigger word is detected.
-7. The chatbot's response will be converted to speech and displayed on the virtual webcam video feed.
-8. You can use the virtual webcam as the video input source in your video conferencing application, and the chatbot's responses will be visible alongside the video feed.
+- ✅ **PEP 8** compliance
+- ✅ **Type hints** throughout
+- ✅ **100 character** line limit
+- ✅ **Comprehensive** docstrings
+- ✅ **Unit tests** for critical paths
 
-Conclusion:
-In this blog post, we have learned how to create a virtual webcam chatbot that responds to voice commands in a video meeting. By utilizing OpenAI's GPT-3, IBM Watson Speech to Text, and IBM Watson Text to Speech, we can convert audio to text, generate chatbot responses, and stream the responses as audio through a virtual webcam. With this setup, we can enhance video conferencing experiences by adding an interactive chatbot component. Feel free to customize the code and experiment further with different models and services to create your own unique virtual webcam chatbot!
+### Running Tests
 
-Full Code:
-You can find the full code for this project on our GitHub repository: [https://github.com/yourusername/virtual-webcam-chatbot](https://github.com/yourusername/virtual-webcam-chatbot)
+```bash
+# All tests
+make test
 
-Note: Remember to handle the use of APIs in accordance with their terms of service and usage limits.
+# Specific module
+uv run pytest tests/test_audio.py
+
+# With coverage report
+uv run pytest --cov=meeting_copilot --cov-report=html
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+<details>
+<summary><b>❌ "No loopback device found"</b></summary>
+
+**Windows:**
+1. Open Sound Settings
+2. Navigate to "Recording" tab
+3. Right-click → Show Disabled Devices
+4. Enable "Stereo Mix"
+5. Set as default recording device
+6. Restart application
+
+**Linux/macOS:**
+System audio capture requires additional setup. Use microphone mode or install virtual audio cable.
+
+</details>
+
+<details>
+<summary><b>❌ "Watson STT connection failed"</b></summary>
+
+**Solution:**
+1. Verify API key in `.env` file
+2. Check service URL format
+3. Test credentials at [IBM Cloud Console](https://cloud.ibm.com)
+4. Ensure internet connection
+5. Check firewall settings
+
+</details>
+
+<details>
+<summary><b>❌ "OpenAI API error"</b></summary>
+
+**Solution:**
+1. Verify `OPENAI_API_KEY` in `.env`
+2. Check API key has credits
+3. Visit [OpenAI Platform](https://platform.openai.com) to verify status
+4. Try different model (e.g., `gpt-3.5-turbo`)
+
+</details>
+
+<details>
+<summary><b>⚠️ "High latency / slow responses"</b></summary>
+
+**Optimizations:**
+1. Use Edge TTS: `TTS_PROVIDER=edge`
+2. Reduce buffer: `PREWAKE_BUFFER_SECONDS=10`
+3. Use faster model: `OPENAI_MODEL=gpt-3.5-turbo`
+4. Increase VAD aggressiveness: `VAD_AGGRESSIVENESS=3`
+
+</details>
+
+<details>
+<summary><b>⚠️ "Poor audio quality / false triggers"</b></summary>
+
+**Solutions:**
+1. Adjust VAD: `VAD_AGGRESSIVENESS=1` (less aggressive)
+2. Increase padding: `VAD_PADDING_MS=500`
+3. Use better microphone
+4. Reduce background noise
+5. Check sample rate: `SAMPLE_RATE=16000`
+
+</details>
+
+### Getting Help
+
+- 📖 **Documentation**: See [README_COPILOT.md](README_COPILOT.md)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/ruslanmv/Virtual-Webcam-Chatbot/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/ruslanmv/Virtual-Webcam-Chatbot/discussions)
+- 📧 **Email**: contact@ruslanmv.com
+
+---
+
+## 🗺️ Roadmap
+
+### v1.0 (Current - Production Ready) ✅
+
+- ✅ Wake word detection (text-based)
+- ✅ Multi-source audio capture
+- ✅ Real-time transcription (IBM Watson STT)
+- ✅ LLM-powered responses (OpenAI)
+- ✅ Text-to-speech output
+- ✅ Desktop UI (PySide6)
+- ✅ Privacy controls
+
+### v1.1 (Q1 2025) 🚧
+
+- 🔲 Real keyword spotting (Porcupine/Whisper)
+- 🔲 Virtual webcam overlay
+- 🔲 Zoom/Teams native integration
+- 🔲 Custom wake word training
+- 🔲 Multi-language support (ES, FR, DE)
+- 🔲 Meeting analytics dashboard
+
+### v1.2 (Q2 2025) 📋
+
+- 🔲 Local LLM option (Ollama/LLaMA)
+- 🔲 Offline mode
+- 🔲 Action item extraction
+- 🔲 Calendar integration
+- 🔲 macOS native support
+- 🔲 Linux support
+
+### v2.0 (Q3 2025) 🎯
+
+- 🔲 Mobile companion app
+- 🔲 Cloud sync
+- 🔲 Team collaboration features
+- 🔲 Advanced analytics
+- 🔲 Plugin ecosystem
+- 🔲 Enterprise SSO
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Ways to Contribute
+
+- 🐛 **Report Bugs** - Help us identify issues
+- 💡 **Suggest Features** - Share your ideas
+- 📝 **Improve Documentation** - Make it clearer
+- 🔧 **Submit Pull Requests** - Contribute code
+- ⭐ **Star the Project** - Show your support
+
+### Development Process
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'feat: Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
+```
+Copyright 2025 Ruslan Magana
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+---
+
+## 👨‍💻 Contact
+
+<div align="center">
+
+**Ruslan Magana**
+
+[![Email](https://img.shields.io/badge/Email-contact@ruslanmv.com-red?logo=gmail&logoColor=white)](mailto:contact@ruslanmv.com)
+[![Website](https://img.shields.io/badge/Website-ruslanmv.com-blue?logo=google-chrome&logoColor=white)](https://ruslanmv.com)
+[![GitHub](https://img.shields.io/badge/GitHub-ruslanmv-black?logo=github&logoColor=white)](https://github.com/ruslanmv)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Ruslan_Magana-0077B5?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ruslanmv/)
+
+</div>
+
+---
+
+## 🙏 Acknowledgments
+
+Special thanks to:
+
+- **IBM Watson** - World-class speech services
+- **OpenAI** - Advanced language models
+- **Microsoft Edge** - Free TTS service
+- **WebRTC Project** - VAD technology
+- **Qt Project** - Cross-platform UI framework
+- **Python Community** - Amazing ecosystem
+
+---
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ruslanmv/Virtual-Webcam-Chatbot&type=Date)](https://star-history.com/#ruslanmv/Virtual-Webcam-Chatbot&Date)
+
+---
+
+<div align="center">
+
+### 🎉 Built with ❤️ for Better Meetings
+
+**Make your meetings more productive with AI**
+
+[⬆ Back to Top](#-meeting-copilot)
+
+</div>
