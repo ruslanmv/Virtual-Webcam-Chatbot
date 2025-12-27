@@ -1,0 +1,132 @@
+[project]
+name = "meeting-copilot"
+version = "1.0.0"
+description = "AI-powered meeting copilot with voice assistant capabilities"
+authors = [
+    {name = "Ruslan Magana", email = "contact@ruslanmv.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+keywords = ["voice-assistant", "meeting", "copilot", "speech-to-text", "text-to-speech", "AI"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+
+dependencies = [
+    # Core dependencies
+    "python-dotenv>=1.0.0",
+
+    # Audio processing
+    "sounddevice>=0.4.6",
+    "pyaudio>=0.2.14",
+    "pydub>=0.25.1",
+    "webrtcvad>=2.0.10",
+    "numpy>=1.24.0",
+
+    # Speech recognition (IBM Watson)
+    "ibm-watson>=7.0.0",
+    "ibm-cloud-sdk-core>=3.16.0",
+
+    # Text-to-Speech
+    "edge-tts>=6.1.9",
+
+    # LLM integration (IBM watsonx.ai is default)
+    "ibm-watsonx-ai>=1.0.0",
+
+    # UI framework
+    "PySide6>=6.6.0",
+    "PySide6-Addons>=6.6.0",
+
+    # Utilities
+    "requests>=2.31.0",
+    "colorama>=0.4.6",
+    "pyperclip>=1.8.2",
+
+    # Logging and monitoring
+    "loguru>=0.7.2",
+
+    # Configuration
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+]
+
+[project.optional-dependencies]
+# Alternative LLM providers (install if not using watsonx.ai)
+openai-provider = [
+    "openai>=1.12.0",
+]
+claude-provider = [
+    "anthropic>=0.18.0",
+]
+ollama-provider = [
+    "openai>=1.12.0",  # Ollama uses OpenAI-compatible API
+]
+all-providers = [
+    "ibm-watsonx-ai>=1.0.0",
+    "openai>=1.12.0",
+    "anthropic>=0.18.0",
+]
+
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.7.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+
+[project.scripts]
+meeting-copilot = "meeting_copilot.app:main"
+copilot = "meeting_copilot.app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatchling.build.targets.wheel]
+packages = ["src/meeting_copilot"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=meeting_copilot --cov-report=html --cov-report=term"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
