@@ -67,7 +67,7 @@
 <td width="50%">
 
 ### 🤖 AI-Powered
-- **Natural Language Understanding** - OpenAI GPT models
+- **Multi-Provider LLM** - IBM watsonx.ai (default), OpenAI, Claude, Ollama
 - **Contextual Responses** - Answer, Opinion, Summarize modes
 - **Text-to-Speech** - Natural voice output
 - **Conversation Memory** - Context-aware interactions
@@ -184,9 +184,19 @@ Edit `.env` and add your API keys:
 IBM_SPEECH_TO_TEXT_API=your_ibm_stt_api_key
 IBM_STT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/xxx
 
-# OpenAI API (Required)
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-4o-mini
+# LLM Provider (Default: watsonx.ai)
+LLM_PROVIDER=watsonx
+
+# IBM watsonx.ai (Default LLM - Required)
+WATSONX_API_KEY=your_watsonx_api_key
+WATSONX_PROJECT_ID=your_watsonx_project_id
+WATSONX_MODEL_ID=meta-llama/llama-3-3-70b-instruct
+WATSONX_BASE_URL=https://us-south.ml.cloud.ibm.com
+
+# Alternative LLM Providers (Optional)
+# OpenAI: Uncomment and configure if using LLM_PROVIDER=openai
+# OPENAI_API_KEY=your_openai_api_key
+# OPENAI_MODEL=gpt-4o-mini
 
 # TTS Provider (Edge TTS is free - no key needed)
 TTS_PROVIDER=edge
@@ -198,7 +208,9 @@ EDGE_TTS_VOICE=en-US-GuyNeural
 | Service | Purpose | Get Key |
 |---------|---------|---------|
 | 🔊 **IBM Watson STT** | Speech-to-Text | [IBM Cloud Console](https://cloud.ibm.com/catalog/services/speech-to-text) |
-| 🤖 **OpenAI** | Language Model | [OpenAI Platform](https://platform.openai.com/api-keys) |
+| 🤖 **IBM watsonx.ai** | Language Model (Default) | [IBM Cloud Console](https://cloud.ibm.com/catalog/services/watsonx-ai) |
+| 🤖 **OpenAI** | Alternative LLM | [OpenAI Platform](https://platform.openai.com/api-keys) |
+| 🤖 **Anthropic Claude** | Alternative LLM | [Anthropic Console](https://console.anthropic.com/) |
 | 🗣️ **Edge TTS** | Text-to-Speech | Free - No key required |
 
 ### 4. Optional Settings
@@ -305,7 +317,7 @@ Watson: "Key points: 1) Budget approval pending, 2) Timeline extended..."
                          Yes    No
                           ▼      └──────┐
                    ┌──────────┐         │
-                   │ OpenAI   │         │
+                   │ watsonx  │         │
                    │   LLM    │         │
                    └────┬─────┘         │
                         ▼               │
@@ -335,7 +347,8 @@ meeting_copilot/
 │   └── wakeword_text.py   Text-based detection (v1.0)
 │
 ├── 🤖 llm/               Language Model
-│   ├── client.py          OpenAI GPT client
+│   ├── client.py          Multi-provider LLM client (watsonx/OpenAI/Claude/Ollama)
+│   ├── model_catalog.py   Model discovery for all providers
 │   └── prompts.py         System prompts & templates
 │
 ├── 🔊 tts/               Text-to-Speech
@@ -356,7 +369,8 @@ meeting_copilot/
 | **Language** | Python 3.11+ | Core development |
 | **Package Manager** | uv | Fast dependency management |
 | **Speech-to-Text** | IBM Watson STT | Audio transcription |
-| **Language Model** | OpenAI GPT-4o-mini | Intelligent responses |
+| **Language Model** | IBM watsonx.ai (default) | Intelligent responses |
+| **Alternative LLMs** | OpenAI, Claude, Ollama | Multi-provider support |
 | **Text-to-Speech** | Edge TTS / IBM Watson | Voice synthesis |
 | **UI Framework** | PySide6 (Qt6) | Desktop interface |
 | **Audio Processing** | sounddevice, webrtcvad | Audio I/O & VAD |
@@ -379,17 +393,39 @@ stt = WatsonSTT(
 transcript, confidence = stt.transcribe_pcm16(audio_bytes, 16000)
 ```
 
-### OpenAI LLM
+### IBM watsonx.ai LLM (Default)
 
 ```python
 from meeting_copilot.llm import LLMClient
+from meeting_copilot.config import LLMProvider
 
-llm = LLMClient(api_key="your_api_key")
+# Uses watsonx.ai by default from .env configuration
+llm = LLMClient()
 
 response = llm.respond(
     mode="answer",
     transcript_context="Meeting discussion..."
 )
+```
+
+### Multi-Provider LLM Support
+
+```python
+from meeting_copilot.llm import LLMClient
+from meeting_copilot.config import LLMProvider
+
+# Explicitly specify provider
+llm_watsonx = LLMClient(provider=LLMProvider.watsonx)
+llm_openai = LLMClient(provider=LLMProvider.openai)
+llm_claude = LLMClient(provider=LLMProvider.claude)
+llm_ollama = LLMClient(provider=LLMProvider.ollama)
+
+# List available models
+from meeting_copilot.llm.model_catalog import list_models_for_provider
+
+models, error = list_models_for_provider(LLMProvider.watsonx)
+if not error:
+    print(f"Available watsonx.ai models: {models}")
 ```
 
 ### Edge TTS
@@ -497,13 +533,23 @@ System audio capture requires additional setup. Use microphone mode or install v
 </details>
 
 <details>
-<summary><b>❌ "OpenAI API error"</b></summary>
+<summary><b>❌ "LLM API error"</b></summary>
 
-**Solution:**
+**For watsonx.ai (default):**
+1. Verify `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` in `.env`
+2. Check credentials at [IBM Cloud Console](https://cloud.ibm.com)
+3. Ensure project ID is correct
+4. Try different model: `WATSONX_MODEL_ID=ibm/granite-3-8b-instruct`
+
+**For OpenAI:**
 1. Verify `OPENAI_API_KEY` in `.env`
 2. Check API key has credits
 3. Visit [OpenAI Platform](https://platform.openai.com) to verify status
-4. Try different model (e.g., `gpt-3.5-turbo`)
+4. Try different model: `OPENAI_MODEL=gpt-3.5-turbo`
+
+**For Claude:**
+1. Verify `ANTHROPIC_API_KEY` in `.env`
+2. Check usage limits at [Anthropic Console](https://console.anthropic.com/)
 
 </details>
 
@@ -513,7 +559,10 @@ System audio capture requires additional setup. Use microphone mode or install v
 **Optimizations:**
 1. Use Edge TTS: `TTS_PROVIDER=edge`
 2. Reduce buffer: `PREWAKE_BUFFER_SECONDS=10`
-3. Use faster model: `OPENAI_MODEL=gpt-3.5-turbo`
+3. Use faster model:
+   - watsonx.ai: `WATSONX_MODEL_ID=ibm/granite-3-8b-instruct`
+   - OpenAI: `OPENAI_MODEL=gpt-3.5-turbo`
+   - Ollama: `OLLAMA_MODEL=llama3` (local, fastest)
 4. Increase VAD aggressiveness: `VAD_AGGRESSIVENESS=3`
 
 </details>
@@ -546,7 +595,8 @@ System audio capture requires additional setup. Use microphone mode or install v
 - ✅ Wake word detection (text-based)
 - ✅ Multi-source audio capture
 - ✅ Real-time transcription (IBM Watson STT)
-- ✅ LLM-powered responses (OpenAI)
+- ✅ Multi-provider LLM (watsonx.ai, OpenAI, Claude, Ollama)
+- ✅ Model catalog for provider discovery
 - ✅ Text-to-speech output
 - ✅ Desktop UI (PySide6)
 - ✅ Privacy controls
@@ -562,12 +612,12 @@ System audio capture requires additional setup. Use microphone mode or install v
 
 ### v1.2 (Q2 2025) 📋
 
-- 🔲 Local LLM option (Ollama/LLaMA)
-- 🔲 Offline mode
+- 🔲 Offline mode with local models
 - 🔲 Action item extraction
 - 🔲 Calendar integration
+- 🔲 Export meeting transcripts
 - 🔲 macOS native support
-- 🔲 Linux support
+- 🔲 Linux support enhancements
 
 ### v2.0 (Q3 2025) 🎯
 
@@ -643,13 +693,22 @@ limitations under the License.
 
 Special thanks to:
 
-- **IBM Watson** - World-class speech services
-- **OpenAI** - Advanced language models
+- **IBM watsonx.ai** - Enterprise-grade foundation models
+- **IBM Watson** - World-class speech services (STT & TTS)
+- **OpenAI** - Advanced language model alternatives
+- **Anthropic** - Claude AI capabilities
 - **Microsoft Edge** - Free TTS service
 - **WebRTC Project** - VAD technology
 - **Qt Project** - Cross-platform UI framework
 - **Python Community** - Amazing ecosystem
 
+---
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ruslanmv/Virtual-Webcam-Chatbot&type=Date)](https://star-history.com/#ruslanmv/Virtual-Webcam-Chatbot&Date)
+
+---
 
 <div align="center">
 
