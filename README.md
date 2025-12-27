@@ -702,14 +702,6 @@ Special thanks to:
 - **Qt Project** - Cross-platform UI framework
 - **Python Community** - Amazing ecosystem
 
----
-
-## ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ruslanmv/Virtual-Webcam-Chatbot&type=Date)](https://star-history.com/#ruslanmv/Virtual-Webcam-Chatbot&Date)
-
----
-
 <div align="center">
 
 ### 🎉 Built with ❤️ for Better Meetings
