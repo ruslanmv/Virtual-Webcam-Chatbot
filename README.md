@@ -601,32 +601,6 @@ System audio capture requires additional setup. Use microphone mode or install v
 - ✅ Desktop UI (PySide6)
 - ✅ Privacy controls
 
-### v1.1 (Q1 2025) 🚧
-
-- 🔲 Real keyword spotting (Porcupine/Whisper)
-- 🔲 Virtual webcam overlay
-- 🔲 Zoom/Teams native integration
-- 🔲 Custom wake word training
-- 🔲 Multi-language support (ES, FR, DE)
-- 🔲 Meeting analytics dashboard
-
-### v1.2 (Q2 2025) 📋
-
-- 🔲 Offline mode with local models
-- 🔲 Action item extraction
-- 🔲 Calendar integration
-- 🔲 Export meeting transcripts
-- 🔲 macOS native support
-- 🔲 Linux support enhancements
-
-### v2.0 (Q3 2025) 🎯
-
-- 🔲 Mobile companion app
-- 🔲 Cloud sync
-- 🔲 Team collaboration features
-- 🔲 Advanced analytics
-- 🔲 Plugin ecosystem
-- 🔲 Enterprise SSO
 
 ---
 
